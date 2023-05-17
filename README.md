@@ -10,7 +10,7 @@ Clone this repository to your Cloud Workstation or other environment with R and/
 git clone https://github.com/justinjm/google-cloud-workstations-r-examples
 ```
 
-Example scripts are found withing the `.src/` directory.
+Example scripts are found withing the `./src` directory.
 
 Start with `00_install.R` to install any potentially missing R packages from your environment.
 
