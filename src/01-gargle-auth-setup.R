@@ -12,35 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Example of authentication with Google Cloud with the package gargle -----
+# 01-gargle-auth-setup.R---------------------------------------------------
+# Example of authentication with Google Cloud with the package gargle 
 # https://gargle.r-lib.org/#gargle
 
-# set constants -----------------------------------------------------------
+## set constants -----------------------------------------------------------
 email <- "your-email@your-company-name.com"
 project_id <- "your-project-id"
 
-# load packages -----------------------------------------------------------
+## load packages -----------------------------------------------------------
 library(googleCloudStorageR)
 library(bigrquery)
 library(gargle)
 
-## set scope to enable access for each R package and use token based auth
-## to simplify 
-### GCS - https://code.markedmondson.me/googleCloudStorageR/articles/googleCloudStorageR.html#token-authentication-1
-### BQ - https://bigrquery.r-dbi.org/reference/bq_auth.html
+## set scopes -------------------------------------------------------------
+## to enable access for each R package and use token based auth to simplify 
+## GCS - https://code.markedmondson.me/googleCloudStorageR/articles/googleCloudStorageR.html#token-authentication-1
+## BQ - https://bigrquery.r-dbi.org/reference/bq_auth.html
 scope <- c("https://www.googleapis.com/auth/cloud-platform")
 token <- token_fetch(scopes = scope, email = email)
 
-# authenticate ------------------------------------------------------------
-## authenticate with each service 
+## authenticate ------------------------------------------------------------
+### authenticate with each service  ----------------------------------------
 gcs_auth(token = token)
 bq_auth(token = token)
 
-# test connections --------------------------------------------------------
-## List gcs buckets
+## test connections --------------------------------------------------------
+### List gcs buckets --------------------------------------------------------
 buckets <- gcs_list_buckets(project_id)
 buckets
 
-## List bigquery datasets 
+### List bigquery datasets -------------------------------------------------
 datasets <- bq_project_datasets(project_id)
 datasets

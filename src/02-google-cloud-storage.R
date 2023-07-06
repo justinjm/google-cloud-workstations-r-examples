@@ -12,53 +12,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Example of interacting with Google Cloud Storage with the package --------
+# 02-google-cloud-storage.R -----------------------------------------------
+# Example of interacting with Google Cloud Storage with the package 
 # googleCloudStorageR: https://code.markedmondson.me/googleCloudStorageR/
 
-# set constants -----------------------------------------------------------
+## set constants -----------------------------------------------------------
 email <- "your-email@your-company-name.com"
 project_id <- "your-project-id"
 bucket <- "your-bucket-name"
 
-# load packages -----------------------------------------------------------
+## load packages -----------------------------------------------------------
 library(googleCloudStorageR)
 library(gargle)
 
-# authenticate ------------------------------------------------------------
+## set scopes -------------------------------------------------------------
 scope <- c("https://www.googleapis.com/auth/cloud-platform")
 token <- token_fetch(scopes = scope,
                      email = email)
 
+## authenticate ------------------------------------------------------------
 gcs_auth(token = token)
 
-## List buckets
+## List buckets ------------------------------------------------------------
 buckets <- gcs_list_buckets(project_id)
 buckets
 
-## list objects in buckets
-### set global bucket first so we don't need to in future api calls
+## list objects in buckets -------------------------------------------------
+## set global bucket first so we don't need to in future api calls
 gcs_global_bucket(bucket)
 gcs_list_objects()
 
-## download file from bucket 
+## download file from bucket ------------------------------------------------
 data_uri <- "gs://cloud-samples-data/ai-platform-unified/datasets/tabular/california-housing-tabular-regression.csv"
 data_raw <- gcs_get_object(object_name = data_uri)
 
-## inspect data to sanity check
+## inspect data to sanity check ---------------------------------------------
 summary(data_raw)
 head(data_raw)
 
-## upload file to our bucket 
+## upload file to our bucket  -----------------------------------------------
 gcs_upload(data_raw,
            name = "california-housing-tabular-regression.csv",
            predefinedAcl = "bucketLevel")
 
-## list to confirm upload 
+## list to confirm upload  -----------------------------------------------
 gcs_list_objects()
 
-## cleanup - delete file
+## cleanup - delete file ---------------------------------------------------
 gcs_delete_object(
   paste0("gs://",bucket,"/california-housing-tabular-regression.csv"))
 
-## confrim deletion
+## confrim deletion -------------------------------------------------------
 gcs_list_objects()

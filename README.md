@@ -4,15 +4,15 @@ A collection of example R scripts for interacting with various Google Cloud Plat
 
 ## How to use
 
-Clone this repository to your Cloud Workstation or other environment with R and/or RStudio: 
+Clone this repository to your Cloud Workstation or other environment with R and/or RStudio:
 
 ```sh
 git clone https://github.com/justinjm/google-cloud-workstations-r-examples
 ```
 
-Example scripts are found withing the `./src` directory.
+Example scripts are found withing the [./src](./src) directory.
 
-Start with `00_install.R` to install any potentially missing R packages from your environment.
+Start with [00_install.R](./src/00_install.R) to install any potentially missing R packages from your environment.
 
 ## References
 
@@ -22,8 +22,7 @@ Start with `00_install.R` to install any potentially missing R packages from you
 * [BigQuery](https://cloud.google.com/bigquery)
 * [Vertex AI](https://cloud.google.com/vertex-ai)
 
-
-## Acknowledgements 
+## Acknowledgements
 
 A special thanks to my colleagues for their help and support:
 

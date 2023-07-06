@@ -12,71 +12,72 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Example data pipeline using Google Cloud Storage and BigQuery --------------
+# 04_gcs_bq_pipeline.R ----------------------------------------------------
+# Example data pipeline using Google Cloud Storage and BigQuery 
 # packages used: googleCloudStorageR and bigrquery
 # https://code.markedmondson.me/googleCloudStorageR/
 # https://bigrquery.r-dbi.org/index.html
 
-# set constants --------------------------------------------------------------
+## set constants --------------------------------------------------------------
 ## for authentication 
 email <- "your-email@company.com"
 project_id <- "your-project-id"
-
 ## for this session
 timestamp <- strftime(Sys.time(), "%Y%m%d%H%M%S")
 bucket_name <- sprintf("%s-%s", project_id, timestamp)
 
-# load packages -----------------------------------------------------------
+## load packages -----------------------------------------------------------
 library(googleCloudStorageR)
 library(bigrquery)
 library(gargle)
 
-# authenticate ------------------------------------------------------------
+## authenticate ------------------------------------------------------------
 ## same scope for each R package and use token based auth
-### GCS - https://code.markedmondson.me/googleCloudStorageR/articles/googleCloudStorageR.html#token-authentication-1
-### BQ - https://bigrquery.r-dbi.org/reference/bq_auth.html
+## GCS - https://code.markedmondson.me/googleCloudStorageR/articles/googleCloudStorageR.html#token-authentication-1
+## BQ - https://bigrquery.r-dbi.org/reference/bq_auth.html
 scope <- c("https://www.googleapis.com/auth/cloud-platform")
 token <- token_fetch(scopes = scope,
                      email = email)
 
-## authenticate with each service 
+## authenticate with each service  ----------------------------------------
 gcs_auth(token = token)
 bq_auth(token = token)
 
-## List gcs buckets
+## List gcs buckets ----------------------------------------
 gcs_list_buckets(project_id)
 
-## List bigquery datasets 
+## List bigquery datasets  ----------------------------------------
 bq_project_datasets(project_id)
 
-# example pipeline  ---------------------------------------------------
-## 1 - create new gcs bucket 
-## https://code.markedmondson.me/googleCloudStorageR/reference/gcs_create_bucket.html
+## example pipeline  ---------------------------------------------------
+### create new gcs bucket ----------------------------------------
+### https://code.markedmondson.me/googleCloudStorageR/reference/gcs_create_bucket.html
 gcs_create_bucket(name = bucket_name, 
                   projectId = project_id, 
                   location = "US")
 
-### download a copy of the file from public bucket for uploading to own our bucket
+### download a copy of the file ----------------------------------------
+### from public bucket for uploading to own our bucket
 data_uri_source <- paste("gs://cloud-samples-data",
                          "/ai-platform-unified/datasets/tabular",
                          "/california-housing-tabular-regression.csv", sep = "")
 data_source <- gcs_get_object(object_name = data_uri_source)
 
-### upload data to newly created bucket
+### upload data to newly created bucket ------------------------------------
 data_filename <- "california-housing-tabular-regression.csv"
 gcs_upload(data_source,
            bucket = bucket_name,
            name = data_filename,
            predefinedAcl = "bucketLevel")
 
-### check to confirm file uploaded
+### check to confirm file uploaded ----------------------------------------
 gcs_list_objects(bucket = bucket_name)
 
-## 4 - create bq dataset 
+### create bq dataset ----------------------------------------------------
 bq_dataset <- bq_dataset(project_id, "california_housing")
 bq_dataset_create(bq_dataset, location = "US")
 
-### create bq table
+### set bq table name and schema----------------------------------------------
 bq_table <- bq_table(project_id, "california_housing", "data_source")
 bq_fields <- as_bq_fields(
   list(
@@ -92,15 +93,14 @@ bq_fields <- as_bq_fields(
   )
 )
 
-### execute table creation 
+### execute bq table creation  ----------------------------------------------
 bq_table_create(bq_table,
                 bq_fields)
 
-### sanity check table exists 
+### sanity check table exists ----------------------------------------------
 bq_table_meta(bq_table)
 
-## 5- load data from GCS to BQ table
-### execute table load
+## load data from GCS to BQ table ------------------------------------------
 bq_table_load(bq_table,
               source_uris = sprintf("gs://%s/%s",
                                     bucket_name,
@@ -111,7 +111,7 @@ bq_table_load(bq_table,
               write_disposition = "WRITE_TRUNCATE")
 
 ## cleanup --------------------------------------------------------------------
-### GCS 
+### GCS ----------------------------------------------
 ### delete file in GCS bucket & confirm deletion
 gcs_delete_object(
   object_name = paste0("gs://", 
@@ -123,10 +123,10 @@ gcs_list_objects(bucket = bucket_name)
 gcs_delete_bucket(bucket = bucket_name)
 gcs_list_buckets(project_id)
 
-### BQ 
-## delete dataset and all underlying tables
-## https://bigrquery.r-dbi.org/reference/api-dataset.html
+### BQ ----------------------------------------------
+### delete dataset and all underlying tables
+### https://bigrquery.r-dbi.org/reference/api-dataset.html
 bq_dataset_delete("california_housing", delete_contents = TRUE)
 
-## list datasets to confirm deletion
+### list datasets to confirm deletion
 bq_project_datasets(project_id)
