@@ -13,12 +13,13 @@
 # limitations under the License.
 
 # install.R --------------------------------------------------------------
+# install packages from CRAN 
 
-# install packages from CRAN ----------------------------------------------
-## create list of packages not already installed and install missing ones 
-required_packages <- c("gargle",
-                       "googleAuthR",
-                       "googleCloudStorageR",
-                       "bigrquery")
+## create list of required packages ----------------------------------------
+required_packages <- c(
+  "glue", "httr", "jsonlite", "withr", "reticulate", "gargle", 
+  "googleAuthR", "googleCloudStorageR","bigrquery"
+  )
 
+## install only missing ones  ----------------------------------------------
 install.packages(setdiff(required_packages, rownames(installed.packages())))
