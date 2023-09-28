@@ -61,7 +61,7 @@ aiplatform$init(project = PROJECT_ID, location = REGION, staging_bucket = BUCKET
 sh("gcloud services enable artifactregistry.googleapis.com")
 
 ## create docker repo ------------------------------------------------
-PRIVATE_REPO < -"my-docker-repo"
+PRIVATE_REPO <- "my-docker-repo"
 
 sh(
   'gcloud artifacts repositories create {PRIVATE_REPO} --repository-format=docker --location={REGION} --description="Docker repository"'
