@@ -158,7 +158,7 @@ instances)
     return(list(predictions=preds))
 }
 
-print("Staring Serving")
+print("Starting Serving")
 
 pr() %>%
     pr_get(Sys.getenv("AIP_HEALTH_ROUTE"), function() "OK") %>%
